@@ -8,6 +8,7 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "migrate": "node scripts/migrate.js",
+    "migrate-all": "node scripts/migrate-all.js",
     "seed": "node scripts/seed.js"
   },
   "dependencies": {

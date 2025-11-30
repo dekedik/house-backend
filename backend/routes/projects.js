@@ -62,6 +62,25 @@ router.get('/', async (req, res) => {
       })
     }
 
+    // Парсим JSON строки в объекты/массивы
+    projects = projects.map(project => {
+      if (project.images && typeof project.images === 'string') {
+        try {
+          project.images = JSON.parse(project.images)
+        } catch (e) {
+          project.images = []
+        }
+      }
+      if (project.features && typeof project.features === 'string') {
+        try {
+          project.features = JSON.parse(project.features)
+        } catch (e) {
+          project.features = []
+        }
+      }
+      return project
+    })
+
     res.json(projects)
   } catch (error) {
     console.error('Ошибка при получении проектов:', error)
@@ -79,7 +98,24 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Проект не найден' })
     }
 
-    res.json(result.rows[0])
+    // Парсим JSON строки в объекты/массивы
+    let project = result.rows[0]
+    if (project.images && typeof project.images === 'string') {
+      try {
+        project.images = JSON.parse(project.images)
+      } catch (e) {
+        project.images = []
+      }
+    }
+    if (project.features && typeof project.features === 'string') {
+      try {
+        project.features = JSON.parse(project.features)
+      } catch (e) {
+        project.features = []
+      }
+    }
+
+    res.json(project)
   } catch (error) {
     console.error('Ошибка при получении проекта:', error)
     res.status(500).json({ error: 'Внутренняя ошибка сервера' })

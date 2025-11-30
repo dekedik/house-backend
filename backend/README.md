@@ -51,12 +51,28 @@ npm run seed
 - `POST /api/auth/login` - Вход в систему
 - `GET /api/auth/verify` - Проверка токена
 
-### Проекты
+### Проекты (Admin API)
 - `GET /api/projects` - Получить все проекты
 - `GET /api/projects/:id` - Получить проект по ID
 - `POST /api/projects` - Создать проект (требует авторизации)
 - `PUT /api/projects/:id` - Обновить проект (требует авторизации)
 - `DELETE /api/projects/:id` - Удалить проект (требует авторизации)
+
+### Публичные API для клиентских фронтендов (v1)
+
+#### Новостройки
+- `GET /api/v1/projects` - Получить все новостройки (публичный доступ)
+  - Query параметры: `district`, `status`, `type`, `areaMin`, `areaMax`, `priceMin`, `priceMax`
+- `GET /api/v1/projects/:id` - Получить новостройку по ID (публичный доступ)
+
+#### Дома
+- `GET /api/v1/houses` - Получить все дома (публичный доступ)
+  - Query параметры: `project_id`, `status`, `search`, `floor`, `rooms`, `areaMin`, `areaMax`, `priceMin`, `priceMax`
+- `GET /api/v1/houses/:id` - Получить дом по ID (публичный доступ)
+
+#### Заявки на звонок
+- `POST /api/v1/callbacks` - Создать заявку на звонок (публичный доступ)
+  - Body: `{ name, phone, reason, project_id?, house_id?, notes? }`
 
 ## Структура
 
