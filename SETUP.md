@@ -76,6 +76,15 @@ docker-compose restart backend
 
 ## Проблемы и решения
 
+### Ошибка "WSL version is too old"
+Если Docker выдает ошибку о старой версии WSL, см. файл `WSL_UPDATE.md` для инструкций по обновлению.
+
+**Быстрое решение:**
+1. Откройте PowerShell от имени администратора
+2. Выполните: `wsl --update`
+3. Выполните: `wsl --shutdown`
+4. Перезапустите Docker Desktop
+
 ### Порт уже занят
 Измените порты в `docker-compose.yml` или остановите процесс, использующий порт.
 
@@ -90,4 +99,7 @@ docker-compose ps
 ```bash
 docker-compose exec backend npm run migrate
 ```
+
+### Запуск без Docker
+Если Docker не работает, см. раздел "Локальная разработка (без Docker)" в `README.md` или инструкции в `WSL_UPDATE.md`.
 

@@ -50,3 +50,4 @@ CREATE INDEX IF NOT EXISTS idx_applications_project_id ON applications(project_i
 CREATE INDEX IF NOT EXISTS idx_applications_manager_id ON applications(manager_id);
 CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status);
 
+
