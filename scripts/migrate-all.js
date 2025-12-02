@@ -10,7 +10,7 @@ async function migrateAll() {
   try {
     const migrationsDir = path.join(__dirname, '../db/migrations')
     const files = fs.readdirSync(migrationsDir)
-      .filter(file => file.endsWith('.sql'))
+      .filter(file => file.endsWith('.sql') && !file.startsWith('._')) // Исключаем служебные файлы macOS
       .sort()
 
     for (const file of files) {

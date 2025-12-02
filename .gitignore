@@ -19,6 +19,12 @@ client/dist
 admin/dist
 *.local
 
+# Environment files
+.env
+.env.local
+.env.prod
+.env.production
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

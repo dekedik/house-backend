@@ -33,7 +33,13 @@ app.use((req, res, next) => {
 })
 
 // Middleware
-app.use(cors())
+// CORS настроен для работы с любыми доменами
+app.use(cors({
+  origin: '*', // Разрешаем запросы с любых доменов
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: false
+}))
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: true, limit: '50mb' }))
 

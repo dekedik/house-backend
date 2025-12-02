@@ -1,95 +1,99 @@
-# Real Estate Agency - Новостройки
+# Backend API
 
-Полнофункциональное приложение для агентства недвижимости с клиентской частью, админ-панелью и бекенд API.
+Backend API для агентства недвижимости на Node.js + Express + PostgreSQL.
 
-## Структура проекта
+## Быстрый старт с Docker
 
-- `client/` - Клиентское приложение (React + Vite)
-- `admin/` - Админ-панель (React + Vite)
-- `backend/` - Backend API (Node.js + Express + PostgreSQL)
-
-## Технологии
-
-- **Frontend**: React, Tailwind CSS, Vite
-- **Backend**: Node.js, Express, PostgreSQL
-- **Авторизация**: JWT
-- **Контейнеризация**: Docker, Docker Compose
-
-## Быстрый старт
-
-### Предварительные требования
-
-- Docker и Docker Compose
-- Node.js 18+ (для локальной разработки без Docker)
-
-### Запуск через Docker Compose
-
-1. Клонируйте репозиторий:
+### 1. Установка зависимостей
 ```bash
-git clone <repository-url>
-cd valera
+npm install
 ```
 
-2. Запустите все сервисы:
+### 2. Запуск проекта
 ```bash
+# Запустить PostgreSQL и Backend в Docker
 docker-compose up -d
-```
 
-3. Выполните миграции базы данных:
-```bash
-docker-compose exec backend npm run migrate
-```
+# Выполнить миграции БД
+docker-compose exec backend npm run migrate-all
 
-4. Создайте базового администратора:
-```bash
+# Создать базового администратора
 docker-compose exec backend npm run seed
 ```
 
-5. Откройте в браузере:
-   - Клиент: http://localhost:5173
-   - Админ-панель: http://localhost:5174
-   - API: http://localhost:3000
-
-### Учетные данные администратора
-
-- **Логин**: `main_manager`
-- **Пароль**: `7\gU%T$fVRt?pqB`
-
-### Локальная разработка (без Docker)
-
-1. Установите зависимости:
+### 3. Проверка работоспособности
 ```bash
-cd backend && npm install
-cd ../client && npm install
-cd ../admin && npm install
+# Запустить тесты API
+npm run test
 ```
 
-2. Настройте PostgreSQL:
-   - Создайте базу данных `realestate`
-   - Пароль: `9.&)YTf(Cq;R^DT`
+Сервер будет доступен по адресу: `http://localhost:3000`
 
-3. Настройте переменные окружения:
-   - Скопируйте `.env.example` в `.env` в каждой директории
-   - Обновите значения при необходимости
+**Учетные данные администратора:**
+- Логин: `main_manager`
+- Пароль: `7gU%T$fVRt?pqB`
 
-4. Запустите миграции:
+## Локальный запуск (без Docker)
+
+### Установка
 ```bash
-cd backend
-npm run migrate
+npm install
+```
+
+### Настройка
+
+Создайте файл `.env`:
+
+```env
+NODE_ENV=development
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=realestate
+DB_USER=postgres
+DB_PASSWORD=9.&)YTf(Cq;R^DT
+JWT_SECRET=your-super-secret-jwt-key-change-in-production
+PORT=3000
+```
+
+### Запуск
+
+#### Разработка
+```bash
+npm run dev
+```
+
+#### Продакшн
+```bash
+npm start
+```
+
+### Миграции
+
+```bash
+# Выполнить все миграции
+npm run migrate-all
+
+# Создать базового администратора
 npm run seed
 ```
 
-5. Запустите сервисы:
+## Тестирование
+
+Запустить полный набор тестов API:
+
 ```bash
-# Backend
-cd backend && npm run dev
-
-# Client (в новом терминале)
-cd client && npm run dev
-
-# Admin (в новом терминале)
-cd admin && npm run dev
+npm run test
 ```
+
+Тесты проверяют:
+- ✅ Health Check
+- ✅ Авторизация (login, verify)
+- ✅ Проекты (CRUD операции)
+- ✅ Дома (CRUD операции)
+- ✅ Клиенты (CRUD операции)
+- ✅ Заявки (CRUD операции)
+- ✅ Пользователи (CRUD операции)
+- ✅ Публичные API (v1/projects, v1/houses, v1/callbacks)
 
 ## API Endpoints
 
@@ -97,62 +101,71 @@ cd admin && npm run dev
 - `POST /api/auth/login` - Вход в систему
 - `GET /api/auth/verify` - Проверка токена
 
-### Проекты
-- `GET /api/projects` - Получить все проекты (публичный)
-- `GET /api/projects/:id` - Получить проект по ID (публичный)
+### Проекты (Admin API)
+- `GET /api/projects` - Получить все проекты
+- `GET /api/projects/:id` - Получить проект по ID
 - `POST /api/projects` - Создать проект (требует авторизации)
 - `PUT /api/projects/:id` - Обновить проект (требует авторизации)
 - `DELETE /api/projects/:id` - Удалить проект (требует авторизации)
 
-## Структура базы данных
+### Публичные API для клиентских фронтендов (v1)
 
-### Таблица `users`
-- `id` - ID пользователя
-- `username` - Логин
-- `password_hash` - Хеш пароля
-- `created_at` - Дата создания
-- `updated_at` - Дата обновления
+#### Новостройки
+- `GET /api/v1/projects` - Получить все новостройки (публичный доступ)
+  - Query параметры: `district`, `status`, `type`, `areaMin`, `areaMax`, `priceMin`, `priceMax`
+- `GET /api/v1/projects/:id` - Получить новостройку по ID (публичный доступ)
 
-### Таблица `projects`
-- `id` - ID проекта
-- `name` - Название проекта
-- `district` - Район
-- `type` - Тип ЖК
-- `description` - Краткое описание
-- `full_description` - Полное описание
-- `price` - Цена за м²
-- `price_from` - Цена от
-- `completion` - Срок сдачи
-- `rooms` - Количество комнат
-- `parking` - Парковка
-- `status` - Статус (Сданные, Строятся, Старт продаж)
-- `discount` - Скидка
-- `image` - Главное изображение
-- `images` - Дополнительные изображения (JSONB)
-- `developer` - Застройщик
-- `floors` - Этажность
-- `apartments` - Количество квартир
-- `area` - Площадь квартир
-- `features` - Инфраструктура (JSONB)
-- `created_at` - Дата создания
-- `updated_at` - Дата обновления
+#### Дома
+- `GET /api/v1/houses` - Получить все дома (публичный доступ)
+  - Query параметры: `project_id`, `status`, `search`, `floor`, `rooms`, `areaMin`, `areaMax`, `priceMin`, `priceMax`
+- `GET /api/v1/houses/:id` - Получить дом по ID (публичный доступ)
 
-## Разработка
+#### Заявки на звонок
+- `POST /api/v1/callbacks` - Создать заявку на звонок (публичный доступ)
+  - Body: `{ name, phone, reason, project_id?, house_id?, notes? }`
 
-### Добавление новых функций
+## Деплой на продакшн сервер
 
-1. Обновите схему БД в `backend/db/migrations/`
-2. Обновите API endpoints в `backend/routes/`
-3. Обновите клиентские компоненты
-4. Обновите админ-панель при необходимости
+Подробная инструкция по деплою находится в файле [DEPLOY.md](./DEPLOY.md)
 
-### Тестирование
+### Быстрый старт
+
+1. Создайте файл `.env.prod` на основе `env.prod.example`
+2. Скопируйте файлы на сервер
+3. Выполните на сервере:
+   ```bash
+   cd /opt/house-backend
+   ./scripts/deploy-init.sh
+   ```
+
+### Обновление приложения
 
 ```bash
-# Проверка здоровья API
-curl http://localhost:3000/health
+cd /opt/house-backend
+./scripts/deploy-update.sh
 ```
 
-## Лицензия
+## Структура
 
-MIT
+```
+backend/
+├── db/
+│   ├── index.js              # Подключение к БД
+│   └── migrations/           # SQL миграции
+├── middleware/
+│   └── auth.js               # JWT middleware
+├── routes/
+│   ├── auth.js               # Роуты авторизации
+│   └── projects.js           # Роуты проектов
+├── scripts/
+│   ├── migrate.js            # Скрипт миграций
+│   ├── seed.js               # Скрипт создания админа
+│   ├── deploy-init.sh        # Скрипт первоначального деплоя
+│   └── deploy-update.sh      # Скрипт обновления
+├── nginx/                    # Конфигурация nginx
+│   ├── nginx.conf
+│   └── conf.d/
+│       └── api.conf
+└── server.js                 # Главный файл сервера
+```
+
