@@ -33,7 +33,13 @@ fi
 # Получение последних изменений из git (если используется git)
 if [ -d .git ]; then
     echo -e "${YELLOW}Получение последних изменений из git...${NC}"
+    # Сохраняем важные файлы перед обновлением
+    [ -f .env.prod ] && cp .env.prod .env.prod.backup
+    [ -d ssl ] && cp -r ssl ssl.backup
     git pull || echo -e "${YELLOW}⚠️  Не удалось получить изменения из git${NC}"
+    # Восстанавливаем важные файлы
+    [ -f .env.prod.backup ] && mv .env.prod.backup .env.prod
+    [ -d ssl.backup ] && rm -rf ssl && mv ssl.backup ssl
 fi
 
 # Сборка новых образов
@@ -74,9 +80,15 @@ for i in {1..10}; do
     sleep 2
 done
 
-# Очистка старых образов (опционально)
+# Очистка старых образов (опционально, но не трогаем SSL и .env)
 echo -e "${YELLOW}Очистка неиспользуемых Docker образов...${NC}"
 docker image prune -f
+
+# Убеждаемся, что SSL сертификаты на месте
+if [ ! -d ssl ] || [ ! -f ssl/fullchain.pem ] || [ ! -f ssl/privkey.pem ]; then
+    echo -e "${YELLOW}⚠️  Внимание: SSL сертификаты не найдены!${NC}"
+    echo -e "${YELLOW}   Если SSL был настроен, выполните: ./scripts/setup-ssl.sh${NC}"
+fi
 
 echo -e "${GREEN}✅ Обновление завершено успешно!${NC}"
 

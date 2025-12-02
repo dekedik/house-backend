@@ -2,7 +2,7 @@
 
 set -e
 
-DOMAIN="admin-doman-gorizont.ru"
+DOMAIN="admin-doman-horizont.ru"
 EMAIL="admin@${DOMAIN}"  # Измените на ваш email
 
 echo "🔒 Настройка SSL сертификата для домена ${DOMAIN}"
@@ -45,7 +45,11 @@ docker-compose --env-file .env.prod -f docker-compose.prod.yml up -d nginx
 
 # Настройка автообновления сертификата
 echo "🔄 Настройка автообновления сертификата..."
+# Удаляем старую задачу, если есть
+crontab -l 2>/dev/null | grep -v "certbot renew" | crontab - 2>/dev/null || true
+# Добавляем новую задачу
 (crontab -l 2>/dev/null; echo "0 3 * * * certbot renew --quiet --deploy-hook 'cd /opt/house-backend && cp /etc/letsencrypt/live/${DOMAIN}/fullchain.pem ssl/ && cp /etc/letsencrypt/live/${DOMAIN}/privkey.pem ssl/ && docker-compose --env-file .env.prod -f docker-compose.prod.yml exec nginx nginx -s reload'") | crontab -
+echo "✅ Автообновление SSL настроено (проверка каждый день в 3:00)"
 
 echo "✅ SSL сертификат установлен успешно!"
 echo "🌐 Домен: https://${DOMAIN}"

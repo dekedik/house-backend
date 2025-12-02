@@ -25,6 +25,12 @@ admin/dist
 .env.prod
 .env.production
 
+# SSL certificates (не коммитить!)
+ssl/
+*.pem
+*.key
+*.crt
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
